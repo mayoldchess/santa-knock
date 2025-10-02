@@ -13,7 +13,6 @@ function loadVoicesOnce() {
       return resolve(voicesCache)
     }
     window.speechSynthesis.onvoiceschanged = got
-    // poke synthesis so voices load on Safari
     const u = new SpeechSynthesisUtterance('')
     window.speechSynthesis.speak(u)
     setTimeout(got, 300)
@@ -22,12 +21,10 @@ function loadVoicesOnce() {
 
 function pickVoice(preferred = []) {
   if (!voicesCache.length) return null
-  // Try preferred names first
   for (const want of preferred) {
     const found = voicesCache.find(v => v.name.toLowerCase().includes(want.toLowerCase()))
     if (found) return found
   }
-  // Fallback to any female or childlike voice if detectable
   const soft = voicesCache.find(v => /female|child|girl/i.test(v.name)) || voicesCache[0]
   return soft || null
 }
@@ -70,18 +67,20 @@ export function listenOnce({ lang = 'en-US', silenceAsEmpty = true } = {}) {
   })
 }
 
-// Convenience voice specifically tuned for Twinkle the Elf:
-// slightly higher pitch, slightly slower, and tries friendly voices first.
+// Elf voice with gentle giggles sprinkled in
 export function sayElf(text) {
-  return say(text, {
-    rate: 0.98,
+  const sprinkle = Math.random() < 0.5 ? ' Heehee.' : ' Teehee.'
+  const line = text.endsWith('!') || text.endsWith('.') ? text + sprinkle : text + '. ' + sprinkle
+  return say(line, {
+    rate: 1.02,
     pitch: 1.25,
     voiceList: [
       'Google UK English Female',
       'Google US English',
-      'Samantha',   // macOS
-      'Ava', 'Allison', 'Victoria'
+      'Samantha', 'Ava', 'Allison', 'Victoria'
     ]
   })
+}
+
 }
 
