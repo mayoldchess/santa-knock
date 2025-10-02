@@ -1,0 +1,6 @@
+name = "santa-knock-proxy"
+main = "src/index.js"
+compatibility_date = "2024-11-05"
+
+[vars]
+OPENAI_BASE = "https://api.openai.com/v1"
