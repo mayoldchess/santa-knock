@@ -81,6 +81,3 @@ export function sayElf(text) {
     ]
   })
 }
-
-}
-
