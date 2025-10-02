@@ -3,23 +3,41 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm run build
+          cache: 'npm'
+
+      # Install deps even if no lockfile existed before
+      - run: npm install --no-audit --no-fund
+
+      # Build with Vite if config exists, else copy static files
+      - name: Build site
+        run: |
+          if [ -f vite.config.js ]; then
+            npm run build
+          else
+            mkdir -p dist
+            [ -d public ] && cp -r public/* dist/ 2>/dev/null || true
+            [ -f index.html ] && cp index.html dist/index.html
+          fi
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
