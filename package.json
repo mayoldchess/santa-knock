@@ -1,0 +1,2 @@
+{ "name":"santa-knock", "private":true, "version":"0.0.1", "type":"module",
+  "scripts":{ "build":"echo ok" } }
